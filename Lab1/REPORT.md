@@ -154,3 +154,12 @@ handled the server responses, saving the downloaded file to the local directory.
 <img src="screenshots/afterClientFriend.jpg" width="200">
 
 > The directory after the command execution
+
+
+## Conclusion
+In this laboratory work, I developed a simple HTTP file server using TCP sockets and a corresponding client capable of 
+requesting and saving files. The server handles HTML, PNG, and PDF files while providing directory listings for 
+browsing. Docker and Docker Compose were used to containerize the project, ensuring it can run consistently on any
+machine. Testing included accessing local files, handling unknown file types, and connecting to a friend’s server over 
+the network. This lab strengthened my understanding of network programming, TCP communication, HTTP protocols, and 
+containerized deployment.
