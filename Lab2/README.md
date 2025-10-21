@@ -55,7 +55,7 @@ succeeded, giving very low throughput. This confirms that the rate limiter effec
 - Normal test: the client sent requests just below the limit, so most requests succeeded, with only minor blocks due to 
 timing overlaps. Throughput was significantly higher, showing that legitimate traffic is largely unaffected.
 
-   <img src="screenshots/rateTest.jpg">
+   <img src="screenshots/rateTest.jpg" width="400">
 
 
 ## 5. Friend Spam Test 

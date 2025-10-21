@@ -2,6 +2,7 @@ import html
 import os
 import sys
 import socket
+import time
 import urllib.parse
 
 
@@ -113,7 +114,7 @@ directory = os.path.abspath(directory)
 serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 serverSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 serverSocket.bind((host, port))
-serverSocket.listen(1)
+serverSocket.listen(5)
 
 print(f"Serving {directory} on http://{host}:{port}")
 
@@ -146,6 +147,7 @@ while True:
         else:
             requested_path = os.path.normpath(os.path.join(SERVE_ROOT, path.lstrip("/")))
 
+        time.sleep(1.0)
         # Preventing directory traversal
         if not requested_path.startswith(SERVE_ROOT):
             body = ("<!doctype html><html><head><meta charset='utf-8'><title>403 Forbidden</title>"
