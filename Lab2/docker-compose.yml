@@ -1,0 +1,10 @@
+services:
+  server:
+    build: .
+    container_name: http_server2
+    command: [ "python", "server.py", "/app/Materials", "8000"]
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./Materials:/app/Materials
+    restart: unless-stopped
