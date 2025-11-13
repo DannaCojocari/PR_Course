@@ -613,11 +613,13 @@ export class Board {
 
                         targetCard.controller = String(playerId);
                         player.firstCard = targetCard;
+                        break
                     }
 
                     // if controller becomes playerId (rare), we immediately proceed
                     if (currentCtrl === playerId) {
                         player.firstCard = this.grid[row]![column]!;
+                        break
                     }
 
                     // wait and retry

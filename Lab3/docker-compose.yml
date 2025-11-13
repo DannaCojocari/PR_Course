@@ -1,0 +1,13 @@
+version: "3.8"
+services:
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pr_lab3
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./:/usr/src/app:cached
+    working_dir: /usr/src/app
+    command: ["npm", "run", "start", "--", "8000", "./boards/perfect.txt"]
