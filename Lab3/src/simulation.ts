@@ -13,11 +13,11 @@ import { Board } from './board.js';
  * @throws Error if an error occurs reading or parsing the board
  */
 async function simulationMain(): Promise<void> {
-    const filename = 'boards/ab.txt';
+    const filename = 'boards/big_board.txt';
     const board: Board = await Board.parseFromFile(filename);
-    const players = 3;
-    const tries = 20;
-    const maxDelayMilliseconds = 100;
+    const players = 4;
+    const tries = 100;
+    const maxDelayMilliseconds = 200;
     const flipTimeoutMilliseconds = 2000;
 
     type PlayerStats = {
@@ -60,7 +60,7 @@ async function simulationMain(): Promise<void> {
 
     /** @param playerNumber player to simulate */
     async function player(playerNumber: number, board: Board, flipTimeoutMilliseconds: number): Promise<void> {
-        const playerId = String(playerNumber);
+        const playerId = String('player' + playerNumber);
         console.log(`Player [${playerId}] starting`);
         const st = getStats(playerId);
 
