@@ -84,5 +84,6 @@ export async function map(board: Board, playerId: string, f: (card: string) => P
  *          format described in the ps4 handout
  */
 export async function watch(board: Board, playerId: string): Promise<string> {
+    await board.watch(playerId);
     return board.look(playerId);
 }

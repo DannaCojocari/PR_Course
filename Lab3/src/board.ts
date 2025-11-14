@@ -39,6 +39,7 @@ class Card {
         this.row = row;
         this.col = col;
         this.prevControlledBy = null;
+        this.checkRep();
     }
 
     /** Ensures the representation invariant holds for this card. */
@@ -83,7 +84,10 @@ class Player {
     previousSecondCard: Card | null = null;
     
 
-    constructor(id: string) { this.id = id; }
+    constructor(id: string) { 
+        this.id = id; 
+        this.checkRep();
+    }
 
     /** Ensures representation invariant holds for this player. */
     checkRep(): void {
@@ -101,13 +105,9 @@ class Player {
         for (const { card, name } of cardRefs) {
             if (card !== null) {
                 assert(card instanceof Card, `Player.${name} must be a Card instance or null`);
-                // optional: check internal card representation
                 card.checkRep();
             }
         }
-
-        // A player should not hold both firstCard and secondCard at the same time
-        assert(!(this.firstCard && this.secondCard), 'Player cannot hold both firstCard and secondCard simultaneously');
     }
 }
 
@@ -153,17 +153,7 @@ export class Board {
                 // card must not be marked removed if it still appears in the grid
                 assert(cell.removed === false, `card at grid[${r}][${c}] is present in grid but marked removed`);
 
-                // basic types & content checks
-                assert(typeof cell.value === 'string', `card.value at ${r},${c} must be string`);
-                // optional: disallow empty string values
-                // assert(cell.value.length > 0, `card.value at ${r},${c} must be non-empty`);
-
-                assert(typeof cell.faceUp === 'boolean', `card.faceUp at ${r},${c} must be boolean`);
-                assert(cell.controller === null || (typeof cell.controller === 'string' && /^\w+$/.test(cell.controller)),
-                    `card.controller at ${r},${c} must be null or valid player id`);
-                assert(typeof cell.removed === 'boolean', `card.removed at ${r},${c} must be boolean`);
-                assert(cell.prevControlledBy === null || (typeof cell.prevControlledBy === 'string' && /^\w+$/.test(cell.prevControlledBy)),
-                    `card.prevControlledBy at ${r},${c} must be null or valid player id`);
+                cell.checkRep();
 
                 // uniqueness: same Card object must not appear in two cells
                 assert(!seenCards.has(cell), `card instance appears in multiple grid cells (first duplicate at ${r},${c})`);
@@ -178,7 +168,6 @@ export class Board {
             assert(typeof key === 'string', `players Map key must be string (got ${typeof key})`);
             assert(typeof pl === 'object' && pl instanceof Player, `players.get(${key}) must be a Player`);
             assert(pl.id === key, `players Map key (${key}) must equal player.id (${pl.id})`);
-            assert(/^\w+$/.test(pl.id), `player id (${pl.id}) must match /^\\w+$/`);
 
             // Helper to check card references
             const checkCardRef = (cardRef: Card | null, name: string, mustBeOnBoardAndControlledBy?: string | null) => {
@@ -221,11 +210,7 @@ export class Board {
             checkCardRef(pl.previousFirstCard, `player ${pl.id} previousFirstCard`);
             checkCardRef(pl.previousSecondCard, `player ${pl.id} previousSecondCard`);
 
-            // Additional sanity checks
-            if (pl.firstCard !== null && pl.secondCard !== null) {
-                // In the current game semantics a player should not hold two "current" cards at once.
-                assert(false, `player ${pl.id} has both firstCard and secondCard set (inconsistent state)`);
-            }
+        
             if (pl.firstCard !== null) {
                 // must be controlled by player
                 assert(pl.firstCard.controller === pl.id, `player ${pl.id} firstCard is not controlled by that player`);
@@ -233,6 +218,8 @@ export class Board {
             if (pl.secondCard !== null) {
                 assert(pl.secondCard.controller === pl.id, `player ${pl.id} secondCard is not controlled by that player`);
             }
+
+            pl.checkRep();
         }
 
         // Validate listeners list
@@ -242,8 +229,6 @@ export class Board {
             assert(typeof entry.playerId === 'string' && /^\w+$/.test(entry.playerId), `listeners[${i}].playerId must be a valid id`);
             assert(typeof entry.resolve === 'function', `listeners[${i}].resolve must be a function`);
         }
-
-        // All checks passed
     }
     
 
@@ -417,10 +402,7 @@ export class Board {
                 }
             }
         }
-
-        this.checkRep();
         return lines.map(line => line + '\n').join('');
-
     }
 
     /**
@@ -457,7 +439,6 @@ export class Board {
                 })
                 .catch((err) => {
                     // If look() failed for some reason, resolve with an empty board string
-                    // (or you could reject; keeping tolerant here is simpler)
                     try { entry.resolve(`${this.height}x${this.width}\n`); } catch (_) {}
                 });
         }
@@ -570,9 +551,6 @@ export class Board {
                 card.faceUp = true;
                 player.firstCard = card;
                 card.controller = String(playerId);
-                this.checkRep();
-                card.checkRep();
-                player.checkRep();
                 this.notifyChange();
             } 
             
@@ -580,9 +558,6 @@ export class Board {
             if (card.faceUp && card.controller === null) { 
                 player.firstCard = card;
                 card.controller = String(playerId);
-                this.checkRep();
-                card.checkRep();
-                player.checkRep();
                 this.notifyChange();
             }
 
@@ -693,10 +668,8 @@ export class Board {
                 player.secondCard = null;
                 this.notifyChange();
             }
-            card.checkRep();
-            player.checkRep();
-            this.checkRep();
         }
+        this.checkRep();
     }
 
 
