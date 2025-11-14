@@ -411,7 +411,7 @@ export class Board {
      * @param playerId Player id string
      * @returns Player object
      **/
-    getOrCreatePlayer(playerId: string): Player {
+    private getOrCreatePlayer(playerId: string): Player {
         playerId = String(playerId);
         if (!this.players.has(playerId)) {
             this.players.set(playerId, new Player(playerId));
